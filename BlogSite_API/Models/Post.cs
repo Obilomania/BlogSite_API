@@ -1,17 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace BlogSite_API.Models
+﻿namespace BlogSite_API.Models
 {
-    public class Post
+    public class Post : BaseEntity
     {
-        [Key]
-        public int PostId { get; set; }
-
-
-        public string Title { get; set; }
-        public string Content { get; set; }
-        public string ImageUrl { get; set; }
+        public string Title { get; set; } = default!;
+        public string Content { get; set; } = default!;
+        public string ImageUrl { get; set; } = default!;
         public DateTime CreatedOn { get; set; }
-        public ICollection<Comment>? Comments { get; set; }
+        public List<Comment> Comments { get; set; } = default!;
     }
 }
