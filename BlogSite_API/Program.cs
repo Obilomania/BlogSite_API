@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 builder.Services.AddScoped<IGenericRepository<Post>, GenericRepository<Post>>();
+builder.Services.AddScoped<IGenericRepository<Comment>, GenericRepository<Comment>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

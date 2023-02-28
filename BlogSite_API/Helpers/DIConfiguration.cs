@@ -8,6 +8,7 @@ namespace BlogSite_API.Helpers
         public static void RegisterServices(IServiceCollection services)
         {
             services.AddScoped<IPostRepository, PostRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
         }
     }
 }

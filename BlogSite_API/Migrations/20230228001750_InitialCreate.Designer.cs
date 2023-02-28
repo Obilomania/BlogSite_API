@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogSite_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230227201238_InitialCreate")]
+    [Migration("20230228001750_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,18 +37,11 @@ namespace BlogSite_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CommentedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

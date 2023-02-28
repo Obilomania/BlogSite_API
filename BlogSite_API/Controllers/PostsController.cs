@@ -19,6 +19,9 @@ namespace BlogSite_API.Controllers
 
         [HttpPost]
         [Route("Create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreatePost([FromBody]PostCreate postCreate)
         {
             var id = await _postDB.CreatePostAsync(postCreate);
@@ -27,6 +30,8 @@ namespace BlogSite_API.Controllers
 
         [HttpPut]
         [Route("Update")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> UpdatePost(PostUpdate postUpdate)
         {
             await _postDB.UpdatePostAsync(postUpdate);
@@ -36,6 +41,9 @@ namespace BlogSite_API.Controllers
 
         [HttpDelete]
         [Route("Delete")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeletePost(PostDelete postDelete)
         {
             await _postDB.DeletePostAsync(postDelete);
@@ -44,6 +52,9 @@ namespace BlogSite_API.Controllers
 
         [HttpGet]
         [Route("Get/{id}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPost(int id)
         {
             var post = await _postDB.GetPostAsync(id);
@@ -52,6 +63,7 @@ namespace BlogSite_API.Controllers
 
         [HttpGet]
         [Route("Get")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllPosts()
         {
             var posts = await _postDB.GetAllPostAsync();

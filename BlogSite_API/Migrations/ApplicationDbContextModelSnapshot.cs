@@ -34,18 +34,11 @@ namespace BlogSite_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CommentId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CommentedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("PostId")
                         .HasColumnType("int");
-
-                    b.Property<string>("UserEmail")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

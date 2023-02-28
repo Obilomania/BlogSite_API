@@ -33,8 +33,6 @@ namespace BlogSite_API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CommentId = table.Column<int>(type: "int", nullable: false),
-                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CommentContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CommentedOn = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PostId = table.Column<int>(type: "int", nullable: false)
