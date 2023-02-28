@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using BlogSite_API.DTOs.PostDTOs;
+using BlogSite_API.Models;
 
 namespace BlogSite_API.Helpers
 {
@@ -6,7 +8,11 @@ namespace BlogSite_API.Helpers
     {
         public MappingConfig()
         {
-            
+            //Post mapping
+            CreateMap<PostCreate, Post>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
+            CreateMap<PostUpdate, Post>().ReverseMap();
+            CreateMap<Post, PostGet>().ReverseMap();
         }
     }
 }

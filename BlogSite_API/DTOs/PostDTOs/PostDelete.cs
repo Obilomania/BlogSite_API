@@ -2,5 +2,6 @@
 {
     public class PostDelete
     {
+        public int Id { get; set; }
     }
 }

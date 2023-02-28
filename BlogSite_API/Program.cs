@@ -12,9 +12,9 @@ DIConfiguration.RegisterServices(builder.Services);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IGenericRepository<Post>, GenericRepository<Post>>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+builder.Services.AddScoped<IGenericRepository<Post>, GenericRepository<Post>>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
