@@ -5,5 +5,8 @@
         public string CommentContent { get; set; } = default!;
         public DateTime CommentedOn { get; set; }
         public Post Post { get; set; } = default!;
+
+        //public string? ApplicationUserId { get; set; }
+        //public ApplicationUser Commenter { get; set; } = default!;
     }
 }
