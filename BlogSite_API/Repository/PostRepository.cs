@@ -1,56 +1,56 @@
-﻿using AutoMapper;
-using BlogSite_API.DTOs.PostDTOs;
+﻿using BlogSite_API.Data;
 using BlogSite_API.Models;
 using BlogSite_API.Repository.IRepository;
-using System.Net;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogSite_API.Repository
 {
     public class PostRepository : IPostRepository
     {
-        private readonly IMapper _mapper;
-        private readonly IGenericRepository<Post> _postRepository;
+        private readonly ApplicationDbContext _db;
 
-        public PostRepository(IMapper mapper, IGenericRepository<Post> postRepository)
-        { 
-        
-            _mapper = mapper;
-            _postRepository = postRepository;
+        public PostRepository(ApplicationDbContext db)
+        {
+            _db = db;
         }
 
-        public async Task<int> CreatePostAsync(PostCreate postCreate)
+        public async Task CreatePostAsync(Post post)
         {
-            var entity = _mapper.Map<Post>(postCreate);
-            await _postRepository.InsertAsync(entity);
-            await _postRepository.SaveChangesAsync();
-            return entity.Id;
+           await _db.Posts.AddAsync(post);
+            _db.SaveChanges();
         }
 
-        public async Task DeletePostAsync(PostDelete postDelete)
+        public async Task DeletePostAsync(Post post)
         {
-            var entity = await _postRepository.GetByIdAsync(postDelete.Id);
-            _postRepository.Delete(entity);
-            await _postRepository.SaveChangesAsync();
+            _db.Posts.Remove(post);
+            await SaveAsync();
         }
 
-        public async Task<PostGet> GetPostAsync(int id)
+        public async Task<IEnumerable<Post>> GetAllPostsAsync()
         {
-            var entity = await _postRepository.GetByIdAsync(id);
-            return _mapper.Map<PostGet>(entity);
+            return await _db.Posts.ToListAsync();
         }
 
-        public async Task<List<PostGet>> GetAllPostAsync()
+        public async Task<Post> GetPostByIdAsync(int id)
         {
-            var entities = await _postRepository.GetAsync(null, null);
-            return _mapper.Map<List<PostGet>>(entities);
+            return await _db.Posts.Include(c => c.Comments)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task UpdatePostAsync(PostUpdate postUpdate)
+        public Task PostExistsAsync(int id)
         {
-            //var existingEntity = await _addressRepository.GetByIdAsync(addressUpdate.Id);
-            var entity = _mapper.Map<Post>(postUpdate);
-            _postRepository.Update(entity);
-            await _postRepository.SaveChangesAsync();
+            throw new NotImplementedException();
+        }
+
+        public async Task SaveAsync()
+        {
+            await _db.SaveChangesAsync();
+        }
+
+        public async Task UpdatePostAsync(Post post)
+        {
+            _db.Posts.Update(post);
+            await SaveAsync();
         }
     }
 }

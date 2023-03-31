@@ -10,10 +10,11 @@ namespace BlogSite_API.Helpers
         public MappingConfig()
         {
             //Post mapping
-            CreateMap<PostCreate, Post>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore()).ReverseMap();
+            CreateMap<PostCreate, Post>().ReverseMap();
             CreateMap<PostUpdate, Post>().ReverseMap();
             CreateMap<Post, PostGet>().ReverseMap();
+
+
 
             //Comment Mapping
             CreateMap<CommentCreate, Comment>()

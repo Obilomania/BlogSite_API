@@ -1,12 +1,11 @@
 ﻿namespace BlogSite_API.Models
 {
-    public class Comment : BaseEntity
+    public class Comment 
     {
+        public int Id { get; set; }
         public string CommentContent { get; set; } = default!;
         public DateTime CommentedOn { get; set; }
-        public Post Post { get; set; } = default!;
-
-        //public string? ApplicationUserId { get; set; }
-        //public ApplicationUser Commenter { get; set; } = default!;
+        public virtual Post? Post { get; set; } = default!;
+        public int PostId { get; set; }
     }
 }

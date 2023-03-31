@@ -1,21 +1,25 @@
 using BlogSite_API.Data;
 using BlogSite_API.Helpers;
-using BlogSite_API.Models;
-using BlogSite_API.Repository;
 using BlogSite_API.Repository.IRepository;
+using BlogSite_API.Repository;
+using BlogSite_API.Utility;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DIConfiguration.RegisterServices(builder.Services);
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+builder.Services.AddScoped<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
-builder.Services.AddScoped<IGenericRepository<Post>, GenericRepository<Post>>();
-builder.Services.AddScoped<IGenericRepository<Comment>, GenericRepository<Comment>>();
+
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
