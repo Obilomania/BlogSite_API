@@ -56,7 +56,7 @@ namespace BlogSite_API.Controllers
             var post = await _context.Posts.Include(c => c.Comments).FirstOrDefaultAsync(p => p.Id == id);
             var model = new PostGet
             {
-                //PostId = post.Id,
+                PostId = post.Id,
                 Title = post.Title,
                 Content = post.Content,
                 ImageUrl = post.ImageUrl,

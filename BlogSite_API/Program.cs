@@ -4,6 +4,8 @@ using BlogSite_API.Repository.IRepository;
 using BlogSite_API.Repository;
 using BlogSite_API.Utility;
 using Microsoft.EntityFrameworkCore;
+using BlogSite_API.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,16 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfig));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 1;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+});
 
 
 builder.Services.AddControllers();
