@@ -3,8 +3,10 @@ using BlogSite_API.DTOs.CommentDTOs;
 using BlogSite_API.DTOs.PostDTOs;
 using BlogSite_API.Models;
 using BlogSite_API.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace BlogSite_API.Controllers
 {
@@ -14,37 +16,55 @@ namespace BlogSite_API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IPostRepository _post;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private ApiResponse _response;
 
-        public CommentController(ApplicationDbContext context, IPostRepository post)
+
+        public CommentController(ApplicationDbContext context, IPostRepository post, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _post = post;
+            _userManager = userManager;
+            this._response = new();
+
         }
 
 
 
 
-        [HttpPost("{postId}/comments")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> CreateComment(int postId, CommentCreate comment)
+        public async Task<ActionResult<ApiResponse>> CreateComment(int postId, string userId, CommentCreate comment)
         {
-            var post = await _post.GetPostByIdAsync(postId);
+            try
+            {
+                var post = await _post.GetPostByIdAsync(postId);
 
-            if (post == null)
-            {
-                return NotFound();
+                if (post == null)
+                {
+                    return NotFound();
+                }
+                var model = new Comment
+                {
+                    CommentContent = comment.CommentContent,
+                    CommentedOn = DateTime.UtcNow,
+                    UserId = userId,
+                    //Commenter = _userManager.GetUserAsync(User).Result.NickName,
+                    Post = post,
+                };
+                await _context.AddAsync(model);
+                _response.Result = model;
+                _response.StatusCode = HttpStatusCode.Created;
+                return Ok(comment);
             }
-            var model = new Comment
+            catch (Exception ex)
             {
-                CommentContent = comment.CommentContent,
-                CommentedOn = DateTime.UtcNow,
-                Post = post,
-            };
-            await _context.AddAsync(model);
-            await _context.SaveChangesAsync();
-            return Ok(comment);
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
         }
 
 

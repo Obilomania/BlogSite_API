@@ -1,4 +1,6 @@
-﻿namespace BlogSite_API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlogSite_API.Models
 {
     public class Post 
     {
@@ -6,7 +8,9 @@
         public string Title { get; set; } = default!;
         public string Content { get; set; } = default!;
         public string ImageUrl { get; set; } = default!;
-        public DateTime? PostDate { get; set; } = DateTime.UtcNow;
+
+        //[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
+        public string? PostDate { get; set; }
         public ICollection<Comment>? Comments { get; set; }
     }
 }

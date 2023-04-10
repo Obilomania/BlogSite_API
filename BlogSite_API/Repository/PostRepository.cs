@@ -28,7 +28,7 @@ namespace BlogSite_API.Repository
 
         public async Task<IEnumerable<Post>> GetAllPostsAsync()
         {
-            return await _db.Posts.ToListAsync();
+            return await _db.Posts.Include(c => c.Comments).ToListAsync();
         }
 
         public async Task<Post> GetPostByIdAsync(int id)

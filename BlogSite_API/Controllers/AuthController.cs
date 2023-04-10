@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -19,13 +20,15 @@ namespace BlogSite_API.Controllers
     {
         private readonly ApplicationDbContext _context;
         private string secretKey;
+        private ApiResponse _response;
+
         private readonly UserManager<ApplicationUser> _usermanager;
         private readonly RoleManager<IdentityRole> _rolemanager;
 
         public AuthController(
-            ApplicationDbContext context, 
-            IConfiguration configuration, 
-            UserManager<ApplicationUser> usermanager, 
+            ApplicationDbContext context,
+            IConfiguration configuration,
+            UserManager<ApplicationUser> usermanager,
             RoleManager<IdentityRole> rolemanager
             )
         {
@@ -33,11 +36,13 @@ namespace BlogSite_API.Controllers
             secretKey = configuration.GetValue<string>("ApiSettings:Secret");
             _usermanager = usermanager;
             _rolemanager = rolemanager;
+            _response = new ApiResponse();
+
         }
 
         //CONTROLLER TO REGISTER A USER
         [HttpPost]
-        [Route("Register User")]
+        [Route("register")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -48,7 +53,10 @@ namespace BlogSite_API.Controllers
 
             if (userFromDb != null)
             {
-                throw new Exception("Username already exists");
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Username already exists");
+                return BadRequest(_response);
 
             }
             ApplicationUser newUser = new()
@@ -78,33 +86,39 @@ namespace BlogSite_API.Controllers
                     {
                         await _usermanager.AddToRoleAsync(newUser, SD.Role_User);
                     }
-                    return Ok();
+                    _response.StatusCode = HttpStatusCode.OK;
+                    _response.IsSuccess = true;
+                    return Ok(_response);
                 }
             }
             catch (Exception ex)
             {
+
             }
-                return BadRequest();
+            _response.StatusCode = HttpStatusCode.BadRequest;
+            _response.IsSuccess = false;
+            _response.ErrorMessages.Add("Error while registering");
+            return BadRequest(_response);
         }
 
 
-        //CONTROLLER TO LOGIN
-        [HttpPost]
-        [Route("Login User")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //ENDPOINT TO LOGIN
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest model)
         {
             ApplicationUser userFromDb = _context.AppUser
-                .FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
+                    .FirstOrDefault(u => u.UserName.ToLower() == model.UserName.ToLower());
 
             bool isValid = await _usermanager.CheckPasswordAsync(userFromDb, model.Password);
+
             if (isValid == false)
             {
-                throw new Exception("Username or password is incorrect");
+                _response.Result = new LoginResponse();
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Username or password is incorrect");
+                return BadRequest(_response);
             }
-
 
             //we have to generate JWT Token
             var roles = await _usermanager.GetRolesAsync(userFromDb);
@@ -131,11 +145,19 @@ namespace BlogSite_API.Controllers
                 Email = userFromDb.Email,
                 Token = tokenHandler.WriteToken(token)
             };
+
             if (loginResponse.Email == null || string.IsNullOrEmpty(loginResponse.Token))
             {
-                throw new Exception("Username or password is incorrect");
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                _response.IsSuccess = false;
+                _response.ErrorMessages.Add("Username or password is incorrect");
+                return BadRequest(_response);
             }
-            return Ok(loginResponse);
+
+            _response.StatusCode = HttpStatusCode.OK;
+            _response.IsSuccess = true;
+            _response.Result = loginResponse;
+            return Ok(_response);
         }
     }
 }

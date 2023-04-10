@@ -7,5 +7,7 @@
         public DateTime CommentedOn { get; set; }
         public virtual Post? Post { get; set; } = default!;
         public int PostId { get; set; }
+        public string  UserId { get; set; }
+        //public string Commenter { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BlogSite_API.DTOs.PostDTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlogSite_API.DTOs.PostDTOs
 {
     public class PostCreate
     {

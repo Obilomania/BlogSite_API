@@ -3,9 +3,8 @@
     public class PostUpdate
     {
         public int Id { get; set; }
-        public string Title { get; set; } = default!;
-        public string Content { get; set; } = default!;
-        public IFormFile ImageFile { get; set; } = default!;
-        public DateTime? UpdatedTime { get; set; } = DateTime.UtcNow;
+        public string Title { get; set; } 
+        public string Content { get; set; } 
+        public IFormFile? ImageFile { get; set; }
     }
 }
