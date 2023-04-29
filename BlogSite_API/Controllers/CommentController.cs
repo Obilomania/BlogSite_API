@@ -36,25 +36,20 @@ namespace BlogSite_API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<ApiResponse>> CreateComment(int postId, string userId, CommentCreate comment)
+        public async Task<ActionResult<ApiResponse>> CreateComment(CommentCreate comment)
         {
             try
             {
-                var post = await _post.GetPostByIdAsync(postId);
-
-                if (post == null)
-                {
-                    return NotFound();
-                }
                 var model = new Comment
                 {
                     CommentContent = comment.CommentContent,
-                    CommentedOn = DateTime.UtcNow,
-                    UserId = userId,
-                    //Commenter = _userManager.GetUserAsync(User).Result.NickName,
-                    Post = post,
+                    CommentedOn = DateTime.Now.ToString("dd-MM-yyyy"),
+                    UserId = comment.UserId,
+                    Commenter = comment.Commenter,
+                    PostId = comment.PostId,
                 };
                 await _context.AddAsync(model);
+                _context.SaveChanges();
                 _response.Result = model;
                 _response.StatusCode = HttpStatusCode.Created;
                 return Ok(comment);
